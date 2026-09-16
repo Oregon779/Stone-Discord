@@ -1,0 +1,25 @@
+name: StoneDiscord
+version: '1.0.0'
+main: dev.stonediscord.plugin.StoneDiscord
+api-version: '1.21'
+author: Stone Plugins
+description: Stone Discord lets players open a fully configurable, clickable Discord invite link with a single command.
+folia-supported: false
+
+commands:
+  discord:
+    description: Sends a clickable Discord invite link to the player.
+    usage: /discord
+    aliases: [dc]
+  stonediscord:
+    description: Main Stone Discord admin command for reloading the plugin and viewing help.
+    usage: /stonediscord <reload|help|checkupdate>
+    aliases: [sdc, stonedc]
+
+permissions:
+  stonediscord.use:
+    description: Allows using /discord to receive the Discord invite link.
+    default: true
+  stonediscord.admin:
+    description: Access to all Stone Discord admin actions (reload, checkupdate, update notifications).
+    default: op

@@ -1,0 +1,54 @@
+# =====================================================================
+#                       Stone Discord - config.yml
+#                        A plugin by Stone Plugins
+# =====================================================================
+#
+# This file contains settings (switches, the invite link, timings).
+# All other plugin text (errors, cooldown, help) stays translated per
+# language in: plugins/Stone Discord/languages/<language>/messages.yml
+#
+# Exception: discord.message below is intentionally kept HERE instead
+# of in messages.yml, so it is a single value regardless of the chosen
+# language - translate it yourself if you run a non-English server.
+#
+# ---------------------------------------------------------------------
+# Placeholders usable in discord.message:
+#   {player}   - the player's name
+#   {link}     - the invite link configured below
+# ---------------------------------------------------------------------
+#
+# Missing options are added automatically on plugin updates. Existing
+# values you changed are never overwritten, even in nested sections.
+# =====================================================================
+
+# Language used for all OTHER plugin text (see messages.yml). Must
+# match a folder under languages/ - "en" and "de" ship by default.
+# New installs always default to English until an admin changes this.
+language: en
+
+# ---------- DISCORD ----------
+discord:
+  # Whether /discord is usable at all.
+  enabled: true
+
+  # Your Discord invite link, used by {link} below and opened when the
+  # message is clicked.
+  link: "https://discord.gg/your-invite"
+
+  # The message sent when a player runs /discord. Supports &-codes,
+  # &#RRGGBB hex and MiniMessage tags (<gradient>, <click>, <hover>,
+  # <underline>, ...) at the same time.
+  message: "<gradient:#5865F2:#7289DA><bold>Join our Discord!</bold></gradient> <gray>»</gray> <hover:show_text:'Click to open'><click:open_url:'{link}'><#5865F2>{link}</#5865F2></click></hover>"
+
+  # Minimum seconds a player has to wait between two uses of /discord.
+  # Set to 0 to disable the cooldown entirely. Does not apply to
+  # players with stonediscord.admin.
+  cooldown-seconds: 5
+
+# Checks https://modrinth.com/project/stone-discord for a newer plugin
+# version. Console feedback is always printed once right on startup. If
+# a newer version is found, everyone with stonediscord.admin (or OP) is
+# reminded every time they join, until the plugin is updated.
+update-checker:
+  enabled: true
+  check-interval-minutes: 60

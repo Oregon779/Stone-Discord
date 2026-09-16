@@ -1,0 +1,36 @@
+# =====================================================================
+# Stone Discord messages (English)
+#
+# Supported color formats, usable at the same time in any message:
+#   &-codes        e.g. &a, &b, &l
+#   Hex colors     e.g. &#FF00AA
+#   MiniMessage    e.g. <gradient:#ff0000:#0000ff>text</gradient>
+#
+# Note: the /discord invite message itself is NOT here - it lives in
+# config.yml (discord.message) since it stays the same regardless of
+# the language chosen below.
+# =====================================================================
+
+prefix: "&l&8[&7Stone &9&lDiscord&8]&r "
+
+general:
+  no-permission: "&c✖ You don't have permission to do this."
+  reload-triggered: "&e⟳ &7Reloading configuration and messages..."
+  reload-success: "&a✔ Configuration and messages have been reloaded."
+
+help:
+  header: "<gradient:#9AA5B1:#5865F2><bold>▬▬▬▬▬ Stone Discord Help ▬▬▬▬▬</bold></gradient>"
+  reload: "&e/stonediscord reload &8» &7Reload the configuration and messages"
+  checkupdate: "&e/stonediscord checkupdate &8» &7Check Modrinth for a new version right now"
+  help: "&e/stonediscord help &8» &7Show this help menu"
+
+discord:
+  disabled: "&c✖ The Discord command is currently disabled."
+  cooldown: "&c✖ Please wait {seconds} more second(s) before using this again."
+
+update:
+  # {version} {current} {behind}
+  available: "&l&8[&7Stone &9&lDiscord&8]&r &fA new version is available: &a{version} &7(you're on &c{current}&7, &e{behind} &7behind). Check Modrinth to update."
+  versions-behind: "{count} version(s)"
+  versions-behind-unknown: "an unknown number of versions"
+  check-triggered: "&e⟳ &7Checking Modrinth for updates now... &8watch the console for the result."
