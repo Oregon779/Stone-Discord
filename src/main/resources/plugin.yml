@@ -1,7 +1,7 @@
 name: StoneDiscord
 version: '1.0.0'
 main: dev.stonediscord.plugin.StoneDiscord
-api-version: '1.21'
+api-version: '26.2'
 author: Stone Plugins
 description: Stone Discord lets players open a fully configurable, clickable Discord invite link with a single command.
 folia-supported: false
