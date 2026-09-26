@@ -45,30 +45,42 @@ public class MessageManager {
         LEGACY_TAGS.put('r', "reset");
     }
 
+    // Bugfix: languageCache + activeLanguage wurden vorher als einfache
+    // (nicht-volatile) Felder aus load() heraus mutiert. Seit /stonediscord
+    // reload dieses load() auf einem async Thread aufruft, konnte getRaw() auf
+    // dem Main-Thread mitten in languageCache.clear()/put() hineinlesen (leere
+    // oder halb befuellte Map) oder ein bereits neues activeLanguage mit einer
+    // noch alten Map kombinieren. Fix: neuer Zustand wird komplett abseits
+    // aufgebaut und danach in einem Schritt ueber eine volatile Referenz
+    // sichtbar gemacht (siehe ConfigManager fuer denselben Bugfix).
+    private record LanguageState(String activeLanguage, Map<String, YamlConfiguration> languageCache) {
+    }
+
     private final StoneDiscord plugin;
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
-    private final Map<String, YamlConfiguration> languageCache = new HashMap<>();
     private final Map<String, String> conversionCache = new ConcurrentHashMap<>();
-    private String activeLanguage = "en";
+    private volatile LanguageState state = new LanguageState("en", Map.of());
 
     public MessageManager(StoneDiscord plugin) {
         this.plugin = plugin;
     }
 
     public void load() {
-        languageCache.clear();
         conversionCache.clear();
-        activeLanguage = plugin.getConfigManager().getLanguage();
+        String newActiveLanguage = plugin.getConfigManager().getLanguage();
+        Map<String, YamlConfiguration> newCache = new HashMap<>();
 
         for (String lang : BUNDLED_LANGUAGES) {
-            loadLanguage(lang);
+            loadLanguage(lang, newCache);
         }
-        if (!languageCache.containsKey(activeLanguage)) {
-            loadLanguage(activeLanguage);
+        if (!newCache.containsKey(newActiveLanguage)) {
+            loadLanguage(newActiveLanguage, newCache);
         }
+
+        state = new LanguageState(newActiveLanguage, newCache);
     }
 
-    private void loadLanguage(String lang) {
+    private void loadLanguage(String lang, Map<String, YamlConfiguration> targetCache) {
         String resourcePath = "languages/" + lang + "/messages.yml";
         File langFolder = new File(plugin.getDataFolder(), "languages/" + lang);
         File file = new File(langFolder, "messages.yml");
@@ -96,14 +108,15 @@ public class MessageManager {
             plugin.getLogger().warning("Failed to update messages for '" + lang + "': " + ex.getMessage());
         }
 
-        languageCache.put(lang, YamlConfiguration.loadConfiguration(file));
+        targetCache.put(lang, YamlConfiguration.loadConfiguration(file));
     }
 
     public String getRaw(String path) {
-        YamlConfiguration active = languageCache.get(activeLanguage);
+        LanguageState current = state;
+        YamlConfiguration active = current.languageCache().get(current.activeLanguage());
         String value = active != null ? active.getString(path) : null;
         if (value == null) {
-            YamlConfiguration fallback = languageCache.get("en");
+            YamlConfiguration fallback = current.languageCache().get("en");
             value = fallback != null ? fallback.getString(path) : null;
         }
         return value != null ? value : "";

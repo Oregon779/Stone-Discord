@@ -13,10 +13,17 @@ public class CooldownManager {
             return 0;
         }
 
-        long now = System.currentTimeMillis();
+        // Bugfix: System.currentTimeMillis() folgt der Systemuhr und kann bei
+        // NTP-Korrekturen ruckartig springen (auch rueckwaerts) - ein
+        // Rueckwaertssprung liess Spieler zuvor eine viel zu lange Cooldown-Zeit
+        // angezeigt bekommen (cooldownSeconds - negative elapsedSeconds). Reine
+        // Zeitspannen (nicht persistiert, nur In-Memory waehrend der Laufzeit)
+        // gehoeren auf System.nanoTime(), das fuer Dauer-Messungen innerhalb
+        // derselben JVM garantiert monoton ist.
+        long now = System.nanoTime();
         Long last = lastUse.get(player);
         if (last != null) {
-            long elapsedSeconds = (now - last) / 1000L;
+            long elapsedSeconds = (now - last) / 1_000_000_000L;
             if (elapsedSeconds < cooldownSeconds) {
                 return (int) (cooldownSeconds - elapsedSeconds);
             }

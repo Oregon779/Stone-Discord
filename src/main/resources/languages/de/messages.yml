@@ -17,6 +17,7 @@ general:
   no-permission: "&c✖ Du hast keine Berechtigung dafür."
   reload-triggered: "&e⟳ &7Konfiguration und Nachrichten werden neu geladen..."
   reload-success: "&a✔ Konfiguration und Nachrichten wurden neu geladen."
+  reload-in-progress: "&c✖ Es laeuft bereits ein Reload, bitte warte, bis dieser fertig ist."
 
 help:
   header: "<gradient:#9AA5B1:#5865F2><bold>▬▬▬▬▬ Stone Discord Hilfe ▬▬▬▬▬</bold></gradient>"

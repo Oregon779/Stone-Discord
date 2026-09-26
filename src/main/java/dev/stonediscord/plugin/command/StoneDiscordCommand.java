@@ -41,13 +41,17 @@ public class StoneDiscordCommand implements CommandExecutor, TabCompleter {
                 // Main-Thread waehrend des Datei-I/O zu blockieren. Sofortiges Feedback
                 // hier ("triggered"), die eigentliche Erfolgsmeldung kommt per Callback
                 // zurueck auf den Main-Thread, sobald der Reload wirklich fertig ist.
-                mm.sendChat(sender, "general.reload-triggered", null);
-                plugin.reloadAsync(() -> {
+                boolean started = plugin.reloadAsync(() -> {
                     if (sender instanceof Player player && !player.isOnline()) {
                         return;
                     }
                     plugin.getMessageManager().sendChat(sender, "general.reload-success", null);
                 });
+                if (started) {
+                    mm.sendChat(sender, "general.reload-triggered", null);
+                } else {
+                    mm.sendChat(sender, "general.reload-in-progress", null);
+                }
             }
             case "checkupdate" -> {
                 mm.sendChat(sender, "update.check-triggered", null);

@@ -39,6 +39,20 @@
             <version>26.2.build.124-stable</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Test-Framework fuer die Unit-Tests unter src/test/java. MockBukkit
+             wurde probeweise ebenfalls eingebunden, scheitert aber reproduzierbar
+             beim Start (RegistryAccessMock wirft InternalDataLoadException fuer
+             "minecraft:point_of_interest_type" - MockBukkit v1.21 ist gegen echte
+             MC-1.21-Registry-Daten gebaut und kennt die fiktive Paper-26.2-Version
+             dieser Sandbox nicht). Deshalb bewusst nicht eingebunden; betroffen sind
+             nur Tests, die einen laufenden Mock-Server brauchen (siehe Bericht). -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.11.4</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -58,6 +72,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>3.3.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
             </plugin>
         </plugins>
     </build>

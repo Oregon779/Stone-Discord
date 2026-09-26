@@ -15,12 +15,19 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public final class StoneDiscord extends JavaPlugin {
 
     private ConfigManager configManager;
     private MessageManager messageManager;
     private CooldownManager cooldownManager;
     private UpdateChecker updateChecker;
+    // Bugfix: verhindert, dass zwei gleichzeitige /stonediscord reload zwei
+    // parallele async Tasks starten, die dieselbe config.yml/messages.yml
+    // gleichzeitig lesen und beschreiben (moegliche Dateikorruption bei zwei
+    // Schreibzugriffen auf denselben Datensatz).
+    private final AtomicBoolean reloadInProgress = new AtomicBoolean(false);
 
     @Override
     public void onEnable() {
@@ -66,11 +73,22 @@ public final class StoneDiscord extends JavaPlugin {
     // nicht beruehrt (reine File-/YAML-Operationen), daher unbedenklich async.
     // Nur die Bestaetigungsnachricht an den Sender hoppt zurueck auf den
     // Main-Thread, wie es fuer Bukkit-Command-Feedback ueblich ist.
-    public void reloadAsync(Runnable onMainThreadDone) {
+    // Rueckgabewert zeigt an, ob der Reload wirklich gestartet wurde. false
+    // bedeutet: es laeuft bereits ein anderer Reload, dieser Aufruf wurde
+    // verworfen (siehe reloadInProgress oben) statt einen zweiten, parallelen
+    // Schreibzugriff auf dieselben Dateien auszuloesen.
+    public boolean reloadAsync(Runnable onMainThreadDone) {
+        if (!reloadInProgress.compareAndSet(false, true)) {
+            return false;
+        }
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            configManager.reload();
-            messageManager.load();
-            cooldownManager.clear();
+            try {
+                configManager.reload();
+                messageManager.load();
+                cooldownManager.clear();
+            } finally {
+                reloadInProgress.set(false);
+            }
 
             Bukkit.getScheduler().runTask(this, () -> {
                 updateChecker.start();
@@ -79,6 +97,7 @@ public final class StoneDiscord extends JavaPlugin {
                 }
             });
         });
+        return true;
     }
 
     private void registerCommands() {

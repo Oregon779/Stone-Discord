@@ -11,28 +11,28 @@ public class ConfigManager {
 
     private static final String RESOURCE_PATH = "config.yml";
 
-    private final StoneDiscord plugin;
-    private File configFile;
-    private YamlConfiguration config;
+    // Bugfix: load()/reload() laeuft seit StoneDiscord#reloadAsync auf einem
+    // async Thread, waehrend gleichzeitig andere Spieler auf dem Main-Thread
+    // /discord ausfuehren und dabei isDiscordEnabled()/getDiscordLink()/... lesen.
+    // Vorher wurden dafuer mehrere einzelne, nicht-volatile Felder nacheinander
+    // ueberschrieben - ein Leser konnte dabei einen Mix aus altem und neuem
+    // Stand sehen (torn read), ohne jede Synchronisierung sogar dauerhaft einen
+    // veralteten Wert. Jetzt wird der komplette neue Zustand abseits der Felder
+    // aufgebaut und erst danach in einem einzigen atomaren Schritt ueber eine
+    // volatile Referenz sichtbar gemacht.
+    private record ConfigSnapshot(YamlConfiguration config, String language, boolean discordEnabled,
+                                   String discordLink, String discordMessage, int discordCooldownSeconds) {
+    }
 
-    // Gecachte Felder statt bei jedem Aufruf YamlConfiguration#get* (String-Split
-    // von "discord.enabled" + Section-Walk) auszufuehren. isDiscordEnabled(),
-    // getDiscordLink() und getDiscordCooldownSeconds() werden bei jedem /discord
-    // gelesen - bei 250+ Spielern, die z.B. nach einem Broadcast gleichzeitig
-    // reagieren, spart das pro Aufruf mehrere Map-Lookups zugunsten von O(1)
-    // Feldzugriffen. Nur beim (seltenen) load()/reload() neu aufgeloest.
-    private String language;
-    private boolean discordEnabled;
-    private String discordLink;
-    private String discordMessage;
-    private int discordCooldownSeconds;
+    private final StoneDiscord plugin;
+    private volatile ConfigSnapshot snapshot;
 
     public ConfigManager(StoneDiscord plugin) {
         this.plugin = plugin;
     }
 
     public void load() {
-        configFile = new File(plugin.getDataFolder(), RESOURCE_PATH);
+        File configFile = new File(plugin.getDataFolder(), RESOURCE_PATH);
         if (!configFile.exists()) {
             plugin.saveResource(RESOURCE_PATH, false);
         }
@@ -46,14 +46,16 @@ public class ConfigManager {
             plugin.getLogger().warning("Failed to update config.yml: " + ex.getMessage());
         }
 
-        config = YamlConfiguration.loadConfiguration(configFile);
-
-        language = config.getString("language", "en");
-        discordEnabled = config.getBoolean("discord.enabled", true);
-        discordLink = config.getString("discord.link", "https://discord.gg/your-invite");
-        discordMessage = config.getString("discord.message",
-                "<gradient:#5865F2:#7289DA><bold>Join our Discord!</bold></gradient> <gray>»</gray> <hover:show_text:'Click to open'><click:open_url:'{link}'><#5865F2>{link}</#5865F2></click></hover>");
-        discordCooldownSeconds = config.getInt("discord.cooldown-seconds", 5);
+        YamlConfiguration newConfig = YamlConfiguration.loadConfiguration(configFile);
+        snapshot = new ConfigSnapshot(
+                newConfig,
+                newConfig.getString("language", "en"),
+                newConfig.getBoolean("discord.enabled", true),
+                newConfig.getString("discord.link", "https://discord.gg/your-invite"),
+                newConfig.getString("discord.message",
+                        "<gradient:#5865F2:#7289DA><bold>Join our Discord!</bold></gradient> <gray>»</gray> <hover:show_text:'Click to open'><click:open_url:'{link}'><#5865F2>{link}</#5865F2></click></hover>"),
+                newConfig.getInt("discord.cooldown-seconds", 5)
+        );
     }
 
     public void reload() {
@@ -61,34 +63,34 @@ public class ConfigManager {
     }
 
     public String getString(String path, String def) {
-        return config.getString(path, def);
+        return snapshot.config().getString(path, def);
     }
 
     public int getInt(String path, int def) {
-        return config.getInt(path, def);
+        return snapshot.config().getInt(path, def);
     }
 
     public boolean getBoolean(String path, boolean def) {
-        return config.getBoolean(path, def);
+        return snapshot.config().getBoolean(path, def);
     }
 
     public String getLanguage() {
-        return language;
+        return snapshot.language();
     }
 
     public boolean isDiscordEnabled() {
-        return discordEnabled;
+        return snapshot.discordEnabled();
     }
 
     public String getDiscordLink() {
-        return discordLink;
+        return snapshot.discordLink();
     }
 
     public String getDiscordMessage() {
-        return discordMessage;
+        return snapshot.discordMessage();
     }
 
     public int getDiscordCooldownSeconds() {
-        return discordCooldownSeconds;
+        return snapshot.discordCooldownSeconds();
     }
 }
