@@ -104,6 +104,9 @@ public class MessageManager {
             if (result.addedKeys() > 0) {
                 plugin.getLogger().info("Added " + result.addedKeys() + " new message key(s) to languages/" + lang + "/messages.yml");
             }
+            if (result.renamedKeys() > 0) {
+                plugin.getLogger().info("Migrated " + result.renamedKeys() + " renamed message key(s) in languages/" + lang + "/messages.yml");
+            }
         } catch (IOException ex) {
             plugin.getLogger().warning("Failed to update messages for '" + lang + "': " + ex.getMessage());
         }

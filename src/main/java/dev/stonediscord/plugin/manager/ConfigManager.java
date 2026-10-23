@@ -42,6 +42,9 @@ public class ConfigManager {
             if (result.addedKeys() > 0) {
                 plugin.getLogger().info("Added " + result.addedKeys() + " new option(s) to config.yml");
             }
+            if (result.renamedKeys() > 0) {
+                plugin.getLogger().info("Migrated " + result.renamedKeys() + " renamed option(s) in config.yml");
+            }
         } catch (IOException ex) {
             plugin.getLogger().warning("Failed to update config.yml: " + ex.getMessage());
         }
