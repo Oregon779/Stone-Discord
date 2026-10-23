@@ -1,5 +1,5 @@
 name: StoneDiscord
-version: '1.0.0-dev2'
+version: '1.0.0-dev3'
 main: dev.stonediscord.plugin.StoneDiscord
 api-version: '26.2'
 author: Stone Plugins

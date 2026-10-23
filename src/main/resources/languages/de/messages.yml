@@ -14,11 +14,11 @@
 prefix: "&l&8[&7Stone &9&lDiscord&8]&r "
 
 general:
-  no-permission: "&c✖ Du hast keine Berechtigung dafür."
+  no-permission: "&c✖ &7Du hast keine Berechtigung dafür."
   reload-triggered: "&e⟳ &7Konfiguration und Nachrichten werden neu geladen..."
-  reload-success: "&a✔ Konfiguration und Nachrichten wurden neu geladen."
-  reload-in-progress: "&c✖ Es laeuft bereits ein Reload, bitte warte, bis dieser fertig ist."
-  player-only: "&c✖ Dieser Befehl kann nur von einem Spieler genutzt werden."
+  reload-success: "&a✔ &7Konfiguration und Nachrichten wurden neu geladen."
+  reload-in-progress: "&c✖ &7Es läuft bereits ein Reload, bitte warte, bis dieser fertig ist."
+  player-only: "&c✖ &7Dieser Befehl kann nur von einem Spieler genutzt werden."
 
 help:
   header: "<gradient:#9AA5B1:#5865F2><bold>▬▬▬▬▬ Stone Discord Hilfe ▬▬▬▬▬</bold></gradient>"
@@ -27,16 +27,17 @@ help:
   help: "&e/stonediscord help &8» &7Dieses Hilfemenü anzeigen"
 
 discord:
-  disabled: "&c✖ Der Discord-Befehl ist derzeit deaktiviert."
-  cooldown: "&c✖ Bitte warte noch {seconds} Sekunde(n), bevor du das erneut nutzt."
+  disabled: "&c✖ &7Der Discord-Befehl ist derzeit deaktiviert."
+  cooldown: "&c✖ &7Bitte warte noch &f{seconds} &7Sekunde(n), bevor du das erneut nutzt."
 
+# {link} - der Link des angeklickten GUI-Items (siehe config.yml discord/media/social)
 media:
-  disabled: "&c✖ Die Media-Bewerbung ist derzeit deaktiviert."
-  link-sent: "&l&8[&7Stone &9&lDiscord&8]&r &fHier ist dein Link: <click:open_url:'{link}'><#5865F2>{link}</#5865F2></click>"
+  disabled: "&c✖ &7Die Media-Bewerbung ist derzeit deaktiviert."
+  link-sent: "&a✔ &7Hier ist dein Link: <hover:show_text:'Klicke zum Öffnen'><click:open_url:'{link}'><#5865F2><u>{link}</u></#5865F2></click></hover>"
 
 social:
-  disabled: "&c✖ Die Social-Media-Übersicht ist derzeit deaktiviert."
-  link-sent: "&l&8[&7Stone &9&lDiscord&8]&r &fHier ist dein Link: <click:open_url:'{link}'><#5865F2>{link}</#5865F2></click>"
+  disabled: "&c✖ &7Die Social-Media-Übersicht ist derzeit deaktiviert."
+  link-sent: "&a✔ &7Hier ist dein Link: <hover:show_text:'Klicke zum Öffnen'><click:open_url:'{link}'><#5865F2><u>{link}</u></#5865F2></click></hover>"
 
 update:
   # {version} {current} {behind}

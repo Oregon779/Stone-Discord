@@ -14,11 +14,11 @@
 prefix: "&l&8[&7Stone &9&lDiscord&8]&r "
 
 general:
-  no-permission: "&c✖ You don't have permission to do this."
+  no-permission: "&c✖ &7You don't have permission to do this."
   reload-triggered: "&e⟳ &7Reloading configuration and messages..."
-  reload-success: "&a✔ Configuration and messages have been reloaded."
-  reload-in-progress: "&c✖ A reload is already in progress, please wait for it to finish."
-  player-only: "&c✖ This command can only be used by a player."
+  reload-success: "&a✔ &7Configuration and messages have been reloaded."
+  reload-in-progress: "&c✖ &7A reload is already in progress, please wait for it to finish."
+  player-only: "&c✖ &7This command can only be used by a player."
 
 help:
   header: "<gradient:#9AA5B1:#5865F2><bold>▬▬▬▬▬ Stone Discord Help ▬▬▬▬▬</bold></gradient>"
@@ -27,16 +27,17 @@ help:
   help: "&e/stonediscord help &8» &7Show this help menu"
 
 discord:
-  disabled: "&c✖ The Discord command is currently disabled."
-  cooldown: "&c✖ Please wait {seconds} more second(s) before using this again."
+  disabled: "&c✖ &7The Discord command is currently disabled."
+  cooldown: "&c✖ &7Please wait &f{seconds} &7more second(s) before using this again."
 
+# {link} - the link of the GUI item that was clicked (see config.yml discord/media/social)
 media:
-  disabled: "&c✖ The media application menu is currently disabled."
-  link-sent: "&l&8[&7Stone &9&lDiscord&8]&r &fHere's your link: <click:open_url:'{link}'><#5865F2>{link}</#5865F2></click>"
+  disabled: "&c✖ &7The media application menu is currently disabled."
+  link-sent: "&a✔ &7Here's your link: <hover:show_text:'Click to open'><click:open_url:'{link}'><#5865F2><u>{link}</u></#5865F2></click></hover>"
 
 social:
-  disabled: "&c✖ The social media menu is currently disabled."
-  link-sent: "&l&8[&7Stone &9&lDiscord&8]&r &fHere's your link: <click:open_url:'{link}'><#5865F2>{link}</#5865F2></click>"
+  disabled: "&c✖ &7The social media menu is currently disabled."
+  link-sent: "&a✔ &7Here's your link: <hover:show_text:'Click to open'><click:open_url:'{link}'><#5865F2><u>{link}</u></#5865F2></click></hover>"
 
 update:
   # {version} {current} {behind}
