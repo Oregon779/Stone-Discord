@@ -214,8 +214,8 @@ class ConfigUpdaterTest {
     void realisticUpgradeOfAnOlderStoneDiscordConfigAddsOnlyWhatIsMissing() throws Exception {
         // Uses the project's actual shipped config.yml as "the new default",
         // simulating an admin who is still on an older version that predates
-        // the update-checker section and has customized their cooldown and
-        // Discord link.
+        // the update-checker/media/social sections and has customized their
+        // cooldown and Discord link.
         String defaultText = Files.readString(Path.of("src/main/resources/config.yml"));
         String oldAdminConfig = """
                 # My own server's StoneDiscord config, don't touch!
@@ -231,12 +231,16 @@ class ConfigUpdaterTest {
         ConfigUpdater.MergeOutcome outcome = ConfigUpdater.mergeAddingMissingKeys(
                 yaml(defaultText), yaml(oldAdminConfig), lines(defaultText), lines(oldAdminConfig));
 
-        assertEquals(1, outcome.addedKeys(), "only the whole missing update-checker section should count as one added root");
+        // three whole missing sections (update-checker, media, social), each
+        // counted once regardless of how many keys/list items it contains
+        assertEquals(3, outcome.addedKeys());
 
         String merged = joined(outcome.mergedLines());
         assertTrue(merged.contains("# My own server's StoneDiscord config, don't touch!"),
                 "the admin's own header comment must survive untouched");
         assertTrue(merged.contains("update-checker:"), "the new section must be added");
+        assertTrue(merged.contains("media:"), "the new media section must be added");
+        assertTrue(merged.contains("social:"), "the new social section must be added");
 
         YamlConfiguration result = yaml(merged);
         // everything the admin customized must be exactly as before
@@ -244,9 +248,14 @@ class ConfigUpdaterTest {
         assertEquals("https://discord.gg/my-real-server", result.getString("discord.link"));
         assertEquals("Join us: {link}", result.getString("discord.message"));
         assertEquals(20, result.getInt("discord.cooldown-seconds"));
-        // the new section must carry the current default's values
+        // the new sections must carry the current default's values, including
+        // the list of GUI items inside media/social
         assertEquals(true, result.getBoolean("update-checker.enabled"));
         assertEquals(60, result.getInt("update-checker.check-interval-minutes"));
+        assertTrue(result.getBoolean("media.enabled"));
+        assertFalse(result.getMapList("media.items").isEmpty());
+        assertTrue(result.getBoolean("social.enabled"));
+        assertFalse(result.getMapList("social.items").isEmpty());
     }
 
     @Test

@@ -206,11 +206,21 @@ public final class ConfigUpdater {
      * lines - the shape this project's own config.yml/messages.yml already
      * use. Returns {@code null} the moment a line doesn't fit that shape, a
      * tab is found, or a duplicate key turns up at the same level.
+     * <p>
+     * A YAML list (e.g. "items:" followed by "- slot: 1" entries) is treated
+     * as opaque content of the key that owns it, exactly like Bukkit's own
+     * {@code ConfigurationSection} does - list entries are never expanded
+     * into dotted paths, even though keys inside them (e.g. each entry's own
+     * "slot:"/"material:") would otherwise look just like real nested keys.
+     * Without this, two list entries sharing an inner key name (every entry
+     * in a list of GUI items has its own "material:") would be indexed as
+     * the same duplicate path and abort the whole merge.
      */
     private static Map<String, LineRange> indexByPath(List<String> lines) {
         Map<String, LineRange> index = new LinkedHashMap<>();
         List<StackFrame> stack = new ArrayList<>();
         int pendingCommentStart = -1;
+        int suppressBelowIndent = -1; // -1 = not inside a list; otherwise ignore key-parsing while indent > this
 
         for (int i = 0; i < lines.size(); i++) {
             String raw = lines.get(i);
@@ -220,26 +230,43 @@ public final class ConfigUpdater {
                 pendingCommentStart = -1;
                 continue;
             }
+            if (raw.indexOf('\t') >= 0) {
+                return null;
+            }
+
+            int indent = raw.length() - raw.stripLeading().length();
+            if (suppressBelowIndent >= 0 && indent > suppressBelowIndent) {
+                pendingCommentStart = -1;
+                continue; // inside a list's entries - opaque content, not a new key
+            } else if (suppressBelowIndent >= 0) {
+                suppressBelowIndent = -1; // dedented back out of the list
+            }
+
             if (trimmed.startsWith("#")) {
                 if (pendingCommentStart < 0) {
                     pendingCommentStart = i;
                 }
                 continue;
             }
-            if (raw.indexOf('\t') >= 0) {
-                return null;
-            }
-
-            Matcher matcher = KEY_LINE.matcher(raw);
-            if (!matcher.matches()) {
-                // List item ("- foo") or block-scalar continuation line - it
-                // belongs to whichever key is currently open on the stack;
-                // nothing new to index for this line itself.
+            if (trimmed.startsWith("-") && (trimmed.length() == 1 || trimmed.charAt(1) == ' ')) {
+                // first entry of a list belonging to the key currently open on
+                // the stack - everything more indented than that key is now
+                // opaque list content, regardless of what it looks like.
+                if (!stack.isEmpty()) {
+                    suppressBelowIndent = stack.get(stack.size() - 1).indent();
+                }
                 pendingCommentStart = -1;
                 continue;
             }
 
-            int indent = matcher.group(1).length();
+            Matcher matcher = KEY_LINE.matcher(raw);
+            if (!matcher.matches()) {
+                // Block-scalar continuation line or similar - belongs to
+                // whichever key is currently open; nothing new to index.
+                pendingCommentStart = -1;
+                continue;
+            }
+
             String key = matcher.group(2);
             int entryStart = pendingCommentStart >= 0 ? pendingCommentStart : i;
             pendingCommentStart = -1;

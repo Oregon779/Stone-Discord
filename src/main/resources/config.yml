@@ -52,3 +52,78 @@ discord:
 update-checker:
   enabled: true
   check-interval-minutes: 60
+
+# =====================================================================
+# /media and /social open a configurable GUI. Both sections below share
+# the exact same structure:
+#
+#   enabled: true/false       - set to false to disable the command entirely
+#   title: "..."              - GUI title, supports &-codes/hex/MiniMessage
+#   rows: 1-6                 - GUI size (rows of 9 slots)
+#   items:                    - add/remove as many entries as you like
+#     - slot: 0-(rows*9-1)    - where the item appears
+#       material: PAPER       - any valid Minecraft item material name
+#       name: "..."           - item display name
+#       lore: ["...", "..."]  - item description, one entry per line
+#       link: "https://..."   - clicking the item closes the GUI and sends
+#                                this link as a clickable chat message
+#
+# Invalid entries (bad slot/material, out of range) are skipped with a
+# warning in the console log instead of breaking the whole menu.
+# =====================================================================
+
+# /media - media/content-creator application requirements.
+media:
+  enabled: true
+  title: "<gradient:#5865F2:#7289DA><bold>Media Bewerbung</bold></gradient>"
+  rows: 3
+  items:
+    - slot: 11
+      material: BOOK
+      name: "<green><bold>Voraussetzungen</bold></green>"
+      lore:
+        - "<gray>Mindestalter: 16 Jahre"
+        - "<gray>Aktive Teilnahme an der Community"
+        - ""
+        - "<yellow>Klicke, um das Bewerbungsformular zu erhalten"
+      link: "https://forms.gle/your-application-form"
+    - slot: 15
+      material: WRITABLE_BOOK
+      name: "<green><bold>Jetzt bewerben</bold></green>"
+      lore:
+        - "<gray>Fülle das Formular aus, um dich"
+        - "<gray>als Media-Partner zu bewerben."
+        - ""
+        - "<yellow>Klicke, um den Link zu erhalten"
+      link: "https://forms.gle/your-application-form"
+
+# /social - overview of the server's social media channels.
+social:
+  enabled: true
+  title: "<gradient:#5865F2:#7289DA><bold>Social Media</bold></gradient>"
+  rows: 3
+  items:
+    - slot: 10
+      material: PAPER
+      name: "<red><bold>YouTube</bold></red>"
+      lore:
+        - "<gray>Abonniere unseren YouTube-Kanal!"
+        - ""
+        - "<yellow>Klicke, um den Link zu erhalten"
+      link: "https://youtube.com/@your-channel"
+    - slot: 13
+      material: PAPER
+      name: "<aqua><bold>Twitter / X</bold></aqua>"
+      lore:
+        - "<gray>Folge uns auf Twitter!"
+        - ""
+        - "<yellow>Klicke, um den Link zu erhalten"
+      link: "https://twitter.com/your-handle"
+    - slot: 16
+      material: PAPER
+      name: "<light_purple><bold>Instagram</bold></light_purple>"
+      lore:
+        - "<gray>Folge uns auf Instagram!"
+        - ""
+        - "<yellow>Klicke, um den Link zu erhalten"
+      link: "https://instagram.com/your-handle"

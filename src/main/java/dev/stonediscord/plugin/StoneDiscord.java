@@ -1,7 +1,10 @@
 package dev.stonediscord.plugin;
 
 import dev.stonediscord.plugin.command.DiscordCommand;
+import dev.stonediscord.plugin.command.LinkMenuCommand;
 import dev.stonediscord.plugin.command.StoneDiscordCommand;
+import dev.stonediscord.plugin.gui.LinkGuiListener;
+import dev.stonediscord.plugin.gui.LinkGuiManager;
 import dev.stonediscord.plugin.listener.PlayerQuitListener;
 import dev.stonediscord.plugin.manager.ConfigManager;
 import dev.stonediscord.plugin.manager.CooldownManager;
@@ -23,6 +26,7 @@ public final class StoneDiscord extends JavaPlugin {
     private MessageManager messageManager;
     private CooldownManager cooldownManager;
     private UpdateChecker updateChecker;
+    private LinkGuiManager linkGuiManager;
     // Bugfix: verhindert, dass zwei gleichzeitige /stonediscord reload zwei
     // parallele async Tasks starten, die dieselbe config.yml/messages.yml
     // gleichzeitig lesen und beschreiben (moegliche Dateikorruption bei zwei
@@ -42,6 +46,9 @@ public final class StoneDiscord extends JavaPlugin {
         getLogger().info("Loading messages (" + configManager.getLanguage() + ")...");
         messageManager = new MessageManager(this);
         messageManager.load();
+
+        linkGuiManager = new LinkGuiManager(this);
+        linkGuiManager.load();
 
         cooldownManager = new CooldownManager();
         updateChecker = new UpdateChecker(this);
@@ -85,6 +92,7 @@ public final class StoneDiscord extends JavaPlugin {
             try {
                 configManager.reload();
                 messageManager.load();
+                linkGuiManager.load();
                 cooldownManager.clear();
             } finally {
                 reloadInProgress.set(false);
@@ -108,6 +116,9 @@ public final class StoneDiscord extends JavaPlugin {
         StoneDiscordCommand adminCommand = new StoneDiscordCommand(this);
         getCommand("stonediscord").setExecutor((CommandExecutor) adminCommand);
         getCommand("stonediscord").setTabCompleter((TabCompleter) adminCommand);
+
+        getCommand("media").setExecutor(new LinkMenuCommand(this, "media", "stonediscord.media", "media.disabled"));
+        getCommand("social").setExecutor(new LinkMenuCommand(this, "social", "stonediscord.social", "social.disabled"));
     }
 
     private void registerListeners() {
@@ -115,6 +126,7 @@ public final class StoneDiscord extends JavaPlugin {
         pm.registerEvents((Listener) updateChecker, (Plugin) this);
         // Verhindert das CooldownManager-Memory-Leak (siehe dortiger Kommentar).
         pm.registerEvents(new PlayerQuitListener(this), this);
+        pm.registerEvents(new LinkGuiListener(this), this);
     }
 
     public ConfigManager getConfigManager() {
@@ -131,5 +143,9 @@ public final class StoneDiscord extends JavaPlugin {
 
     public UpdateChecker getUpdateChecker() {
         return updateChecker;
+    }
+
+    public LinkGuiManager getLinkGuiManager() {
+        return linkGuiManager;
     }
 }

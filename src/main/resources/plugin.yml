@@ -1,5 +1,5 @@
 name: StoneDiscord
-version: '1.0.0-dev1'
+version: '1.0.0-dev2'
 main: dev.stonediscord.plugin.StoneDiscord
 api-version: '26.2'
 author: Stone Plugins
@@ -15,6 +15,12 @@ commands:
     description: Main Stone Discord admin command for reloading the plugin and viewing help.
     usage: /stonediscord <reload|help|checkupdate>
     aliases: [sdc, stonedc]
+  media:
+    description: Opens the configurable media application GUI.
+    usage: /media
+  social:
+    description: Opens the configurable social media channels GUI.
+    usage: /social
 
 permissions:
   stonediscord.use:
@@ -23,3 +29,9 @@ permissions:
   stonediscord.admin:
     description: Access to all Stone Discord admin actions (reload, checkupdate, update notifications).
     default: op
+  stonediscord.media:
+    description: Allows opening the media application GUI via /media.
+    default: true
+  stonediscord.social:
+    description: Allows opening the social media channels GUI via /social.
+    default: true

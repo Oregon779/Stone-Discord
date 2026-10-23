@@ -18,6 +18,7 @@ general:
   reload-triggered: "&e⟳ &7Konfiguration und Nachrichten werden neu geladen..."
   reload-success: "&a✔ Konfiguration und Nachrichten wurden neu geladen."
   reload-in-progress: "&c✖ Es laeuft bereits ein Reload, bitte warte, bis dieser fertig ist."
+  player-only: "&c✖ Dieser Befehl kann nur von einem Spieler genutzt werden."
 
 help:
   header: "<gradient:#9AA5B1:#5865F2><bold>▬▬▬▬▬ Stone Discord Hilfe ▬▬▬▬▬</bold></gradient>"
@@ -28,6 +29,14 @@ help:
 discord:
   disabled: "&c✖ Der Discord-Befehl ist derzeit deaktiviert."
   cooldown: "&c✖ Bitte warte noch {seconds} Sekunde(n), bevor du das erneut nutzt."
+
+media:
+  disabled: "&c✖ Die Media-Bewerbung ist derzeit deaktiviert."
+  link-sent: "&l&8[&7Stone &9&lDiscord&8]&r &fHier ist dein Link: <click:open_url:'{link}'><#5865F2>{link}</#5865F2></click>"
+
+social:
+  disabled: "&c✖ Die Social-Media-Übersicht ist derzeit deaktiviert."
+  link-sent: "&l&8[&7Stone &9&lDiscord&8]&r &fHier ist dein Link: <click:open_url:'{link}'><#5865F2>{link}</#5865F2></click>"
 
 update:
   # {version} {current} {behind}

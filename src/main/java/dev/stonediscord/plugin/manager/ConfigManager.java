@@ -2,6 +2,7 @@ package dev.stonediscord.plugin.manager;
 
 import dev.stonediscord.plugin.StoneDiscord;
 import dev.stonediscord.plugin.config.ConfigUpdater;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -75,6 +76,10 @@ public class ConfigManager {
 
     public boolean getBoolean(String path, boolean def) {
         return snapshot.config().getBoolean(path, def);
+    }
+
+    public ConfigurationSection getSection(String path) {
+        return snapshot.config().getConfigurationSection(path);
     }
 
     public String getLanguage() {
